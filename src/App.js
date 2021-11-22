@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 
 import Questionhandler from "./function";
 import data from "./data.json";
@@ -10,17 +10,34 @@ function App() {
     userresponse: [],
   };
   const [text, settext] = useState("");
+  const [storedquestions, setstoredquestions] = useState({});
   const [isText, setisText] = useState(false);
   const [currentquestion, setcurrentquestion] = useState({});
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
+
   useEffect(() => {
-    setcurrentquestion(questions[0]);
+    if (window.localStorage.getItem("lastleftquestion")) {
+      setcounter(parseInt(window.localStorage.getItem("lastleftquestion")));
+    } else {
+      // window.localStorage.setItem("lastleftquestion", 0);
+      setcurrentquestion(questions[0]);
+    }
+    if (window.localStorage.getItem("chatbotdata")) {
+      console.log(JSON.parse(window.localStorage.getItem("chatbotdata")));
+      setform(JSON.parse(window.localStorage.getItem("chatbotdata")));
+      setstoredquestions(
+        JSON.parse(window.localStorage.getItem("chatbotdata")).userresponse
+      );
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    setcurrentquestion(questions[counter]);
+    if (window.localStorage.getItem("lastleftquestion") !== "full") {
+      setcurrentquestion(questions[counter]);
+    }
+
     console.log(counter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
@@ -31,13 +48,16 @@ function App() {
 
     setform({ ...form, userresponse: uservalues });
 
+    window.localStorage.setItem(
+      "chatbotdata",
+      JSON.stringify({ ...form, userresponse: uservalues })
+    );
+    setstoredquestions({ ...form, userresponse: uservalues }.userresponse);
     if (counter >= questions.length - 1) {
-      window.localStorage.setItem(
-        "chatbotdata",
-        JSON.stringify({ ...form, userresponse: uservalues })
-      );
+      window.localStorage.setItem("lastleftquestion", "full");
       alert("thanks");
     } else {
+      window.localStorage.setItem("lastleftquestion", counter + 1);
       setcounter((counter) => counter + 1);
     }
   };
@@ -51,7 +71,35 @@ function App() {
   };
   return (
     <div className="App">
-      {Questionhandler(currentquestion, handleSubmit)}
+      {Object.keys(storedquestions).length > 0 && (
+        <div style={{ backgroundColor: "black", color: "white" }}>
+          {storedquestions.map((question, index) => (
+            <div key={index}>
+              <p> {question.item.question}</p>
+              {question.item.type !== "multi" && <p>{question.response}</p>}
+              {question.item.type === "multi" && (
+                <ul>
+                  {question.response.map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {window.localStorage.getItem("lastleftquestion") === "full" ? (
+        <p>you have answered all questions</p>
+      ) : (
+        Questionhandler(currentquestion, handleSubmit)
+      )}
+      {/* <div>
+        { ? (
+          Questionhandler(currentquestion, handleSubmit)
+        ) : (
+          <></>
+        )}
+      </div> */}
 
       <input
         id={currentquestion.id}

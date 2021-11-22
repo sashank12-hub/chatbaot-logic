@@ -25,7 +25,7 @@ export default function Question(item, callback) {
   switch (item.type) {
     case "select":
       htmlElement = (
-        <div>
+        <div key={item.id}>
           <label htmlFor={item.id}>{item.question}</label>
           {item.options.map((option, index) => {
             return (

@@ -20,7 +20,6 @@ function App() {
     if (window.localStorage.getItem("lastleftquestion")) {
       setcounter(parseInt(window.localStorage.getItem("lastleftquestion")));
     } else {
-      // window.localStorage.setItem("lastleftquestion", 0);
       setcurrentquestion(questions[0]);
     }
     if (window.localStorage.getItem("chatbotdata")) {
@@ -66,7 +65,6 @@ function App() {
     settext("");
   };
   const textchangehandler = (e) => {
-    //  console.log(e.target.value);
     settext(e.target.value);
   };
   return (
@@ -93,13 +91,6 @@ function App() {
       ) : (
         Questionhandler(currentquestion, handleSubmit)
       )}
-      {/* <div>
-        { ? (
-          Questionhandler(currentquestion, handleSubmit)
-        ) : (
-          <></>
-        )}
-      </div> */}
 
       <input
         id={currentquestion.id}

@@ -3,7 +3,6 @@ export default function Question(item, callback) {
   var selected = [];
   const reader = new FileReader();
   const radiobuttonhandler = (e) => {
-    // console.log(e.target.value);
     callback(item, e.target.value);
   };
   const checkboxhandler = (e, array) => {

@@ -85,12 +85,7 @@ function App() {
         .catch(function (error) {
           console.log(error);
         });
-      // const res = await fetch("https://tbsdemos.com/bot_uat/api/Login/test", {
-      //   method: "POST",
-      //   json: JSON.stringify(array),
-      // });
-      // const data = await res.json();
-      // console.log(data);
+
       alert("thanks");
     } else {
       window.localStorage.setItem("lastleftquestion", counter + 1);

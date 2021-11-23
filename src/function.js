@@ -1,5 +1,6 @@
 import React from "react";
 export default function Question(item, callback) {
+  console.log(item);
   var selected = [];
   const reader = new FileReader();
   const radiobuttonhandler = (e) => {
@@ -21,20 +22,20 @@ export default function Question(item, callback) {
     callback(item, event.target.files[0].name);
   };
   let htmlElement;
-  switch (item.type) {
+  switch (item.type_of_control) {
     case "select":
       htmlElement = (
         <div key={item.id}>
-          <label htmlFor={item.id}>{item.question}</label>
-          {item.options.map((option, index) => {
+          <label htmlFor={item.id}>{item.Message}</label>
+          {item.options.map((item) => {
             return (
-              <div key={index}>
-                <label htmlFor={option}>{option}</label>
+              <div key={item.label}>
+                <label htmlFor={item.label}>{item.label}</label>
                 <input
                   type="radio"
                   name="radiobutton"
-                  value={option}
-                  id={option}
+                  value={item.value}
+                  id={item.label}
                   onChange={(e) => radiobuttonhandler(e)}
                 />
               </div>
@@ -86,10 +87,18 @@ export default function Question(item, callback) {
     case "text":
       htmlElement = (
         <div>
-          <label htmlFor={item.id}>{item.question}</label>
+          <label htmlFor={item.id}>{item.Message}</label>
         </div>
       );
       break;
+    case "textarea":
+      htmlElement = (
+        <div>
+          <label htmlFor={item.id}>{item.Message}</label>
+        </div>
+      );
+      break;
+
     case "dropdown":
       htmlElement = (
         <div>
@@ -113,7 +122,7 @@ export default function Question(item, callback) {
     case "file":
       htmlElement = (
         <div>
-          <label htmlFor="myfile">Select a file:</label>
+          <label htmlFor="myfile">{item.Message}</label>
 
           <input
             type="file"

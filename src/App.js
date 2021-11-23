@@ -142,7 +142,7 @@ function App() {
               textchangehandler(e);
             }}
             style={{ marginTop: "20px", marginLeft: "130px" }}
-            disabled={currentquestion.type_of_control !== "text"}
+            // disabled={currentquestion.type_of_control !== "text" }
           />
           {currentquestion.type_of_control === "textarea" && (
             <textarea
@@ -157,10 +157,10 @@ function App() {
           )}
           <button
             onClick={() => handlebutton()}
-            disabled={
-              currentquestion.type_of_control !== "text" ||
-              currentquestion.type_of_control === "textarea"
-            }
+            // disabled={
+            //   currentquestion.type_of_control !== "text" ||
+            //   currentquestion.type_of_control !== "textarea"
+            // }
           >
             send
           </button>{" "}

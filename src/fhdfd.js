@@ -175,7 +175,7 @@ function App() {
               {Questionhandler(currentquestion, handleSubmit)}
             </div>
           ) : (
-            <></>
+            <h1> ...Loading</h1>
           )}
         </div>
         <div className="inputFooter">
@@ -188,6 +188,12 @@ function App() {
                 type="text"
                 onChange={(e) => {
                   textchangehandler(e);
+                }}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    console.log(event);
+                    handlebutton();
+                  }
                 }}
                 style={{
                   display:
@@ -217,7 +223,7 @@ function App() {
               </button>
             </>
           ) : (
-            <></>
+            <h1> ...Loading</h1>
           )}
 
           <button className="mikeBtn">

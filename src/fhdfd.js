@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
+import "./App.scss";
 
 import axios from "axios";
 import Questionhandler from "./function";
-import data from "./data.json";
+import avatar from "./images/avatar.png";
+import avatarorange from "./images/avatar-orange.png";
+import avatarwhite from "./images/avatar-white.png";
+import chat from "./images/chat.png";
+import chatbotorange from "./images/chatbot-orange.png";
+import chatbotwhite from "./images/chatbot-white.png";
+import chatbot from "./images/chatbot.png";
+import chaticon from "./images/chaticon.png";
+import close from "./images/close.png";
+import email from "./images/email.png";
+import fav from "./images/favicon.png";
+import paper_plane from "./images/paper-plane.png";
+import send from "./images/send.png";
+import tick from "./images/tick.png";
+import voice from "./images/voice.png";
 
 function App() {
   const initialformstate = {
@@ -12,7 +27,7 @@ function App() {
   const [questions, setquestions] = useState([]);
   const [text, settext] = useState("");
   const [storedquestions, setstoredquestions] = useState({});
-  const [isText, setisText] = useState(false);
+
   const [currentquestion, setcurrentquestion] = useState({});
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
@@ -49,6 +64,7 @@ function App() {
       })
       .catch((err) => console.log(err));
     console.log("1st");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -57,9 +73,12 @@ function App() {
     }
 
     console.log(counter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
 
   const handleSubmit = async (obj1, value) => {
+    let x = document.getElementById("chatMiddlee");
+    console.log(x.scrollHeight - x.clientHeight);
     console.log(obj1, value);
     let uservalues = [...form.userresponse, { item: obj1, response: value }];
 
@@ -85,16 +104,12 @@ function App() {
         .catch(function (error) {
           console.log(error);
         });
-      // const res = await fetch("https://tbsdemos.com/bot_uat/api/Login/test", {
-      //   method: "POST",
-      //   json: JSON.stringify(array),
-      // });
-      // const data = await res.json();
-      // console.log(data);
+
       alert("thanks");
     } else {
+      x.scrollTop = x.scrollHeight - x.clientHeight;
+
       window.localStorage.setItem("lastleftquestion", counter + 1);
-      // setcurrentquestion((counter) => questions[counter + 1]);
       setcounter((counter) => counter + 1);
     }
   };
@@ -107,73 +122,110 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {Object.keys(storedquestions).length > 0 && (
-        <div style={{ backgroundColor: "black", color: "white" }}>
-          {storedquestions.map((question, index) => (
-            <div key={index}>
-              <p> {question.item.question}</p>
-              {question.item.type !== "multi" && <p>{question.response}</p>}
-              {question.item.type === "multi" && (
-                <ul>
-                  {question.response.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+    <>
+      <img className="chatIcon" src={chaticon} alt={"chatIcon"} />
+      <div className="chatBox">
+        <div className="chatHeader">
+          <h1>ICICI Foundation</h1>
+          <button className="emailIcon">
+            <img src={email} alt={"email"} />
+          </button>
+          <button className="closeIcon">
+            <img src={chatbot} alt={"chatBot"} />
+          </button>
         </div>
-      )}
-      {window.localStorage.getItem("lastleftquestion") === "full" ? (
-        <p>you have answered all questions</p>
-      ) : (
-        <></>
-      )}
-      {fetched === true && currentquestion ? (
-        Questionhandler(currentquestion, handleSubmit)
-      ) : (
-        <></>
-      )}
-
-      {fetched === true && currentquestion ? (
-        <>
-          <input
-            id={currentquestion.id}
-            placeholder={currentquestion.placeholder}
-            value={text}
-            type="text"
-            onChange={(e) => {
-              textchangehandler(e);
-            }}
-            style={{ marginTop: "20px", marginLeft: "130px" }}
-            disabled={currentquestion.type_of_control !== "text"}
-          />
-          {currentquestion.type_of_control === "textarea" && (
-            <textarea
-              rows="4"
-              cols="50"
-              placeholder={currentquestion.Message}
-              name={"textarea"}
-              onChange={(e) => {
-                textchangehandler(e);
-              }}
-            ></textarea>
+        <div className="chatMiddle" id="chatMiddlee">
+          {Object.keys(storedquestions).length > 0 && (
+            <div className="results">
+              {storedquestions.map((question, index) => (
+                <div key={index} className="response-1">
+                  <div className="response-2">
+                    <img src={chatbot} alt={"chatBot"} />
+                    <p> {question.item.Message}</p>
+                  </div>
+                  {question.item.type_of_control !== "multi" && (
+                    <div className="response-3">
+                      <p>{question.response}</p>
+                      <img src={avatarorange} alt={"avatar"} />
+                    </div>
+                  )}
+                  {question.item.type_of_control === "multi" && (
+                    <div className="response-3">
+                      <ul className="ul-response-1">
+                        {question.response.map((item, index) => (
+                          <li key={index} className="li-response-1">
+                            <img src={fav} alt={"listicon"} /> {item}
+                          </li>
+                        ))}
+                      </ul>
+                      <img src={avatarorange} alt={"avatar"} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
-          <button
-            onClick={() => handlebutton()}
-            disabled={
-              currentquestion.type_of_control !== "text" ||
-              currentquestion.type_of_control === "textarea"
-            }
-          >
-            send
-          </button>{" "}
-        </>
-      ) : (
-        <></>
-      )}
-    </div>
+          {window.localStorage.getItem("lastleftquestion") === "full" ? (
+            <p className="submitMsg">You have answered all questions.</p>
+          ) : (
+            <></>
+          )}
+          {fetched === true && currentquestion ? (
+            <div className="response-2">
+              {Questionhandler(currentquestion, handleSubmit)}
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        <div className="inputFooter">
+          {fetched === true && currentquestion ? (
+            <>
+              <input
+                id={currentquestion.id}
+                placeholder={currentquestion.placeholder}
+                value={text}
+                type="text"
+                onChange={(e) => {
+                  textchangehandler(e);
+                }}
+                style={{
+                  display:
+                    currentquestion.type_of_control === "textarea"
+                      ? "none"
+                      : "block",
+                }}
+                disabled={currentquestion.type_of_control !== "text"}
+              />
+              {currentquestion.type_of_control === "textarea" && (
+                <textarea
+                  rows="4"
+                  cols="50"
+                  placeholder={currentquestion.Message}
+                  name={"textarea"}
+                  onChange={(e) => {
+                    textchangehandler(e);
+                  }}
+                ></textarea>
+              )}
+              <button
+                className="sendBtn"
+                onClick={() => handlebutton()}
+                // disabled={currentquestion.type !== "text"}
+              >
+                <img src={send} />
+              </button>
+            </>
+          ) : (
+            <></>
+          )}
+
+          <button className="mikeBtn">
+            <img src={voice} alt="mic button" />
+          </button>
+        </div>
+      </div>
+    </>
   );
 }
 

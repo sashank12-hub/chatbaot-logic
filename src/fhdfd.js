@@ -37,10 +37,18 @@ function App() {
     axios
       .get("https://tbsdemos.com/bot_uat/api/Login/question")
       .then((res) => {
-        let req = res.data.data.slice(1, res.data.data.length - 1);
-        console.log(req);
+        console.log(res.data);
+        let req = res.data.data;
+
         setquestions(req);
         setfetched(true);
+        if (
+          !window.localStorage.getItem("campaign_id") ||
+          !window.localStorage.getItem("user_id")
+        ) {
+          window.localStorage.setItem("campaign_id", res.data.campaign_id);
+          window.localStorage.setItem("user_id", res.data.user_id);
+        }
         if (window.localStorage.getItem("lastleftquestion")) {
           console.log(
             questions[parseInt(window.localStorage.getItem("lastleftquestion"))]
@@ -170,7 +178,7 @@ function App() {
           ) : (
             <></>
           )}
-          {fetched === true && currentquestion ? (
+          {currentquestion ? (
             <div className="response-2">
               {Questionhandler(currentquestion, handleSubmit)}
             </div>

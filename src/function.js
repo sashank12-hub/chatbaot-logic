@@ -1,6 +1,6 @@
 import React from "react";
-export default function Question(item, callback) {
-  console.log(item);
+export default function Question(item, callback, fetched) {
+  console.log(fetched);
   var selected = [];
   const reader = new FileReader();
   const radiobuttonhandler = (e) => {

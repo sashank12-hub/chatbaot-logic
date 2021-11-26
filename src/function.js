@@ -1,10 +1,14 @@
 import React from "react";
 export default function Question(item, callback, fetched) {
-  console.log(fetched);
   var selected = [];
   const reader = new FileReader();
   const radiobuttonhandler = (e) => {
-    callback(item, e.target.value);
+    let answers = [
+      {
+        answer: e.target.value,
+      },
+    ];
+    callback(item, answers);
   };
   const checkboxhandler = (e, array) => {
     array.forEach((fruite) => {
@@ -13,20 +17,27 @@ export default function Question(item, callback, fetched) {
     selected = [...array];
   };
   const selecthandler = (e) => {
-    callback(item, e.target.value);
-    console.log(e.target.value);
+    let answers = [
+      {
+        answer: e.target.value,
+      },
+    ];
+    callback(item, answers);
   };
   const filechangehandler = (item, event) => {
-    console.log("here", event.target.files[0]);
-
-    callback(item, event.target.files[0].name);
+    let answers = [
+      {
+        answer: event.target.files[0].name,
+      },
+    ];
+    callback(item, answers);
   };
   let htmlElement;
   switch (item.type_of_control) {
     case "select":
       htmlElement = (
         <div key={item.id}>
-          <label htmlFor={item.id}>{item.Message}</label>
+          <label htmlFor={item.id}>{item.message}</label>
           {item.options.map((item) => {
             return (
               <div key={item.label}>
@@ -76,7 +87,12 @@ export default function Question(item, callback, fetched) {
               let selectedcheckboxes = selected.filter(
                 (item) => item.ischecked === true
               );
-              callback(item, [...selectedcheckboxes.map((item) => item.value)]);
+
+              callback(item, [
+                ...selectedcheckboxes.map((item) => {
+                  return { answer: item.value };
+                }),
+              ]);
             }}
           >
             submit response
@@ -87,14 +103,14 @@ export default function Question(item, callback, fetched) {
     case "text":
       htmlElement = (
         <div>
-          <label htmlFor={item.id}>{item.Message}</label>
+          <label htmlFor={item.id}>{item.message}</label>
         </div>
       );
       break;
     case "textarea":
       htmlElement = (
         <div>
-          <label htmlFor={item.id}>{item.Message}</label>
+          <label htmlFor={item.id}>{item.message}</label>
         </div>
       );
       break;
@@ -122,7 +138,7 @@ export default function Question(item, callback, fetched) {
     case "file":
       htmlElement = (
         <div>
-          <label htmlFor="myfile">{item.Message}</label>
+          <label htmlFor="myfile">{item.message}</label>
 
           <input
             type="file"

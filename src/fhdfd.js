@@ -18,6 +18,7 @@ import paper_plane from "./images/paper-plane.png";
 import send from "./images/send.png";
 import tick from "./images/tick.png";
 import voice from "./images/voice.png";
+import localdata from "./data.json";
 
 function App() {
   const initialformstate = {
@@ -25,7 +26,7 @@ function App() {
   };
 
   const [questions, setquestions] = useState([]);
-  const [text, settext] = useState("");
+  const [text, settext] = useState([]);
   const [storedquestions, setstoredquestions] = useState({});
 
   const [currentquestion, setcurrentquestion] = useState({});
@@ -84,11 +85,15 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [counter]);
 
-  const handleSubmit = async (obj1, value) => {
+  const handleSubmit = async (obj1, answers) => {
     let x = document.getElementById("chatMiddlee");
     console.log(x.scrollHeight - x.clientHeight);
-    console.log(obj1, value);
-    let uservalues = [...form.userresponse, { item: obj1, response: value }];
+    console.log(obj1, answers);
+    const response = {
+      question: obj1.question,
+      answers: answers,
+    };
+    let uservalues = [...form.userresponse, { item: obj1, response: response }];
 
     setform({ ...form, userresponse: uservalues });
     console.log({ ...form, userresponse: uservalues });
@@ -100,14 +105,16 @@ function App() {
     setstoredquestions({ ...form, userresponse: uservalues }.userresponse);
     if (counter >= questions.length - 1) {
       window.localStorage.setItem("lastleftquestion", "full");
-      const array = window.localStorage.getItem("chatbotdata");
-      console.log(JSON.stringify(array));
       axios
         .post("https://tbsdemos.com/bot_uat/api/Login/test", {
-          json: JSON.stringify({ array }),
+          user_id: window.localStorage.getItem("user_id"),
+          campaign_id: window.localStorage.getItem("campaign_id"),
+
+          json: JSON.parse(window.localStorage.getItem("chatbotdata"))
+            .userresponse,
         })
         .then((res) => {
-          console.log(res.status);
+          console.log(res);
         })
         .catch(function (error) {
           console.log(error);
@@ -122,7 +129,7 @@ function App() {
     }
   };
   const handlebutton = () => {
-    handleSubmit(currentquestion, text);
+    handleSubmit(currentquestion, [{ answer: text }]);
     settext("");
   };
   const textchangehandler = (e) => {
@@ -149,26 +156,26 @@ function App() {
                 <div key={index} className="response-1">
                   <div className="response-2">
                     <img src={chatbot} alt={"chatBot"} />
-                    <p> {question.item.Message}</p>
+                    <p> {question.item.message}</p>
                   </div>
-                  {question.item.type_of_control !== "multi" && (
+                  {/* {question.item.type_of_control !== "multi" && (
                     <div className="response-3">
                       <p>{question.response}</p>
                       <img src={avatarorange} alt={"avatar"} />
                     </div>
-                  )}
-                  {question.item.type_of_control === "multi" && (
+                  )} */}
+                  {
                     <div className="response-3">
                       <ul className="ul-response-1">
-                        {question.response.map((item, index) => (
+                        {question.response.answers.map((item, index) => (
                           <li key={index} className="li-response-1">
-                            <img src={fav} alt={"listicon"} /> {item}
+                            <img src={fav} alt={"listicon"} /> {item.answer}
                           </li>
                         ))}
                       </ul>
                       <img src={avatarorange} alt={"avatar"} />
                     </div>
-                  )}
+                  }
                 </div>
               ))}
             </div>
@@ -215,7 +222,7 @@ function App() {
                 <textarea
                   rows="4"
                   cols="50"
-                  placeholder={currentquestion.Message}
+                  placeholder={currentquestion.message}
                   name={"textarea"}
                   onChange={(e) => {
                     textchangehandler(e);

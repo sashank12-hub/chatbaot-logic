@@ -130,15 +130,24 @@ function App() {
     }
   };
   const handlebutton = () => {
-    if (currentquestion.type_of_control === "checkbox") {
-      let selectedcheckboxes = selected.filter(
-        (item) => item.ischecked === true
-      );
-      handleSubmit(currentquestion, [
-        ...selectedcheckboxes.map((item) => {
+    if (currentquestion.type_of_control === "Checkbox") {
+      let answers = selected.map((item) => {
+        if (item.ischecked === true) {
           return { answer: item.value };
-        }),
-      ]);
+        }
+      });
+      console.log(answers);
+      handleSubmit(currentquestion, answers);
+      // console.log([
+      //   ...selectedcheckboxes.map((item) => {
+      //     return { answer: item.value };
+      //   }),
+      // ]);
+      // handleSubmit(currentquestion, [
+      //   ...selectedcheckboxes.map((item) => {
+      //     return { answer: item.value };
+      //   }),
+      // ]);
     } else {
       handleSubmit(currentquestion, [{ answer: text }]);
       settext("");
@@ -153,6 +162,7 @@ function App() {
       if (fruite.value === e.target.value) fruite.ischecked = e.target.checked;
     });
     selected = [...array];
+    console.log("selected", selected);
   };
 
   return (

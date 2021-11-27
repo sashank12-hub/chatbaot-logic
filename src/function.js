@@ -59,7 +59,7 @@ export default function Question(item, callback, fetched, checkboxhandler) {
           trigger: trigger,
         };
       });
-
+      console.log("array", array);
       htmlElement = (
         <div>
           <label style={{ margin: "10px" }} htmlFor={item.option_id}>

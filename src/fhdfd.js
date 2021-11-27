@@ -73,7 +73,7 @@ function App() {
         }
       })
       .catch((err) => console.log(err));
-    console.log("1st");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -131,23 +131,11 @@ function App() {
   };
   const handlebutton = () => {
     if (currentquestion.type_of_control === "Checkbox") {
-      let answers = selected.map((item) => {
-        if (item.ischecked === true) {
-          return { answer: item.value };
-        }
-      });
-      console.log(answers);
-      handleSubmit(currentquestion, answers);
-      // console.log([
-      //   ...selectedcheckboxes.map((item) => {
-      //     return { answer: item.value };
-      //   }),
-      // ]);
-      // handleSubmit(currentquestion, [
-      //   ...selectedcheckboxes.map((item) => {
-      //     return { answer: item.value };
-      //   }),
-      // ]);
+      let answers = selected.filter((item) => item.ischecked === true);
+
+      handleSubmit(currentquestion, [
+        { answer: answers.map((item) => item.value).join(",") },
+      ]);
     } else {
       handleSubmit(currentquestion, [{ answer: text }]);
       settext("");
@@ -187,13 +175,21 @@ function App() {
                     <img src={chatbot} alt={"chatBot"} />
                     <p> {question.item.message}</p>
                   </div>
-                  {/* {question.item.type_of_control !== "Checkbox" && (
+                  {question.item.type_of_control === "Checkbox" && (
                     <div className="response-3">
-                      <p>{question.response}</p>
+                      <ul className="ul-response-1">
+                        {question.response.answers[0].answer
+                          .split(",")
+                          .map((item, index) => (
+                            <li key={index} className="li-response-1">
+                              <img src={fav} alt={"listicon"} /> {item}
+                            </li>
+                          ))}
+                      </ul>
                       <img src={avatarorange} alt={"avatar"} />
                     </div>
-                  )} */}
-                  {
+                  )}
+                  {question.item.type_of_control !== "Checkbox" && (
                     <div className="response-3">
                       <ul className="ul-response-1">
                         {question.response.answers.map((item, index) => (
@@ -204,7 +200,7 @@ function App() {
                       </ul>
                       <img src={avatarorange} alt={"avatar"} />
                     </div>
-                  }
+                  )}
                 </div>
               ))}
             </div>
@@ -214,7 +210,8 @@ function App() {
           ) : (
             <></>
           )}
-          {currentquestion ? (
+          {window.localStorage.getItem("lastleftquestion") !== "full" &&
+          currentquestion ? (
             <div className="response-2">
               {Questionhandler(
                 currentquestion,
@@ -224,7 +221,7 @@ function App() {
               )}
             </div>
           ) : (
-            <h1> ...Loading</h1>
+            <></>
           )}
         </div>
         <div className="inputFooter">
@@ -272,7 +269,7 @@ function App() {
               </button>
             </>
           ) : (
-            <h1> ...Loading</h1>
+            <></>
           )}
 
           <button className="mikeBtn">

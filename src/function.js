@@ -62,9 +62,7 @@ export default function Question(item, callback, fetched, checkboxhandler) {
       console.log("array", array);
       htmlElement = (
         <div>
-          <label style={{ margin: "10px" }} htmlFor={item.option_id}>
-            {item.question}
-          </label>
+          <label htmlFor={item.option_id}>{item.question}</label>
           {array.map((option, index) => {
             return (
               <div key={index}>

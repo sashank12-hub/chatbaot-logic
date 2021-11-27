@@ -21,6 +21,7 @@ import voice from "./images/voice.png";
 import localdata from "./data.json";
 
 function App() {
+  var selected = [];
   const initialformstate = {
     userresponse: [],
   };
@@ -129,11 +130,29 @@ function App() {
     }
   };
   const handlebutton = () => {
-    handleSubmit(currentquestion, [{ answer: text }]);
-    settext("");
+    if (currentquestion.type_of_control === "checkbox") {
+      let selectedcheckboxes = selected.filter(
+        (item) => item.ischecked === true
+      );
+      handleSubmit(currentquestion, [
+        ...selectedcheckboxes.map((item) => {
+          return { answer: item.value };
+        }),
+      ]);
+    } else {
+      handleSubmit(currentquestion, [{ answer: text }]);
+      settext("");
+    }
   };
   const textchangehandler = (e) => {
     settext(e.target.value);
+  };
+
+  const checkboxhandler = (e, array) => {
+    array.forEach((fruite) => {
+      if (fruite.value === e.target.value) fruite.ischecked = e.target.checked;
+    });
+    selected = [...array];
   };
 
   return (
@@ -158,7 +177,7 @@ function App() {
                     <img src={chatbot} alt={"chatBot"} />
                     <p> {question.item.message}</p>
                   </div>
-                  {/* {question.item.type_of_control !== "multi" && (
+                  {/* {question.item.type_of_control !== "Checkbox" && (
                     <div className="response-3">
                       <p>{question.response}</p>
                       <img src={avatarorange} alt={"avatar"} />
@@ -187,7 +206,12 @@ function App() {
           )}
           {currentquestion ? (
             <div className="response-2">
-              {Questionhandler(currentquestion, handleSubmit)}
+              {Questionhandler(
+                currentquestion,
+                handleSubmit,
+                fetched,
+                checkboxhandler
+              )}
             </div>
           ) : (
             <h1> ...Loading</h1>

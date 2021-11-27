@@ -1,6 +1,5 @@
 import React from "react";
-export default function Question(item, callback, fetched) {
-  var selected = [];
+export default function Question(item, callback, fetched, checkboxhandler) {
   const reader = new FileReader();
   const radiobuttonhandler = (e) => {
     let answers = [
@@ -10,12 +9,7 @@ export default function Question(item, callback, fetched) {
     ];
     callback(item, answers);
   };
-  const checkboxhandler = (e, array) => {
-    array.forEach((fruite) => {
-      if (fruite.value === e.target.value) fruite.ischecked = e.target.checked;
-    });
-    selected = [...array];
-  };
+
   const selecthandler = (e) => {
     let answers = [
       {
@@ -55,17 +49,20 @@ export default function Question(item, callback, fetched) {
         </div>
       );
       break;
-    case "multi":
-      let array = item.options.map((item) => {
+    case "Checkbox":
+      let array = item.options.map(({ label, option_id, trigger, value }) => {
         return {
-          value: item,
+          label: label,
+          value: value,
           ischecked: false,
+          option_id: option_id,
+          trigger: trigger,
         };
       });
 
       htmlElement = (
         <div>
-          <label style={{ margin: "10px" }} htmlFor={item.id}>
+          <label style={{ margin: "10px" }} htmlFor={item.option_id}>
             {item.question}
           </label>
           {array.map((option, index) => {
@@ -82,21 +79,6 @@ export default function Question(item, callback, fetched) {
               </div>
             );
           })}
-          <button
-            onClick={() => {
-              let selectedcheckboxes = selected.filter(
-                (item) => item.ischecked === true
-              );
-
-              callback(item, [
-                ...selectedcheckboxes.map((item) => {
-                  return { answer: item.value };
-                }),
-              ]);
-            }}
-          >
-            submit response
-          </button>
         </div>
       );
       break;
@@ -153,6 +135,7 @@ export default function Question(item, callback, fetched) {
         </div>
       );
       break;
+
     default:
       return htmlElement;
   }

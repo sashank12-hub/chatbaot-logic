@@ -1,7 +1,13 @@
 import React from "react";
-export default function Question(item, callback, fetched, checkboxhandler) {
-  const reader = new FileReader();
+export default function Question(
+  item,
+  callback,
+  fetched,
+  checkboxhandler,
+  textchangehandler
+) {
   const radiobuttonhandler = (e) => {
+    console.log(e.target.value);
     let answers = [
       {
         answer: e.target.value,
@@ -9,6 +15,15 @@ export default function Question(item, callback, fetched, checkboxhandler) {
     ];
     callback(item, answers);
   };
+  // const Timehandler = (e) => {
+  //   console.log(e.target.value);
+  //   let answers = [
+  //     {
+  //       answer: e.target.value,
+  //     },
+  //   ];
+  //   //callback(item, answers);
+  // };
 
   const selecthandler = (e) => {
     let answers = [
@@ -19,16 +34,30 @@ export default function Question(item, callback, fetched, checkboxhandler) {
     callback(item, answers);
   };
   const filechangehandler = (item, event) => {
+    let file = event.target.files[0];
     let answers = [
       {
         answer: event.target.files[0].name,
       },
     ];
     callback(item, answers);
+    const reader = new FileReader();
+    reader.addEventListener(
+      "load",
+      function () {
+        // convert image file to base64 string
+        console.log(reader.result);
+      },
+      false
+    );
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
   let htmlElement;
   switch (item.type_of_control) {
-    case "select":
+    case "Button":
       htmlElement = (
         <div key={item.id}>
           <label htmlFor={item.id}>{item.message}</label>
@@ -49,7 +78,7 @@ export default function Question(item, callback, fetched, checkboxhandler) {
         </div>
       );
       break;
-    case "Checkbox":
+    case "Multiselect":
       let array = item.options.map(({ label, option_id, trigger, value }) => {
         return {
           label: label,
@@ -80,14 +109,14 @@ export default function Question(item, callback, fetched, checkboxhandler) {
         </div>
       );
       break;
-    case "text":
+    case "Text":
       htmlElement = (
         <div>
           <label htmlFor={item.id}>{item.message}</label>
         </div>
       );
       break;
-    case "textarea":
+    case "Textarea":
       htmlElement = (
         <div>
           <label htmlFor={item.id}>{item.message}</label>
@@ -95,7 +124,7 @@ export default function Question(item, callback, fetched, checkboxhandler) {
       );
       break;
 
-    case "dropdown":
+    case "Dropdown":
       htmlElement = (
         <div>
           <label htmlFor="dropdown">{item.question}</label>
@@ -106,16 +135,16 @@ export default function Question(item, callback, fetched, checkboxhandler) {
             onChange={(e) => selecthandler(e)}
           >
             <option>select option from list</option>
-            {item.options.map((option) => (
-              <option key={option} value={option}>
-                {option}
+            {item.options.map((option, index) => (
+              <option key={index} value={option.value}>
+                {option.value}
               </option>
             ))}
           </select>
         </div>
       );
       break;
-    case "file":
+    case "File":
       htmlElement = (
         <div>
           <label htmlFor="myfile">{item.message}</label>
@@ -134,6 +163,34 @@ export default function Question(item, callback, fetched, checkboxhandler) {
       );
       break;
 
+    case "Datepicker":
+      htmlElement = (
+        <div>
+          <label htmlFor="datepicker">{item.message}</label>
+
+          <input
+            type="date"
+            id="datepicker"
+            name="datepicker"
+            onChange={(e) => textchangehandler(e)}
+          />
+        </div>
+      );
+      break;
+    case "Timepicker":
+      htmlElement = (
+        <div>
+          <label htmlFor="timepicker">{item.message}</label>
+
+          <input
+            type="time"
+            id="timepicker"
+            name="timepicker"
+            onChange={(e) => textchangehandler(e)}
+          />
+        </div>
+      );
+      break;
     default:
       return htmlElement;
   }

@@ -27,9 +27,9 @@ function App() {
   };
 
   const [questions, setquestions] = useState([]);
-  const [text, settext] = useState([]);
+  const [text, settext] = useState("");
   const [storedquestions, setstoredquestions] = useState({});
-
+  const [islastitem, setislastitem] = useState(false);
   const [currentquestion, setcurrentquestion] = useState({});
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
@@ -116,6 +116,7 @@ function App() {
         })
         .then((res) => {
           console.log(res);
+          setislastitem(true);
         })
         .catch(function (error) {
           console.log(error);
@@ -130,15 +131,28 @@ function App() {
     }
   };
   const handlebutton = () => {
-    if (currentquestion.type_of_control === "Checkbox") {
+    if (currentquestion.type_of_control === "Multiselect") {
       let answers = selected.filter((item) => item.ischecked === true);
 
       handleSubmit(currentquestion, [
         { answer: answers.map((item) => item.value).join(",") },
       ]);
     } else {
-      handleSubmit(currentquestion, [{ answer: text }]);
-      settext("");
+      if (
+        currentquestion.type_of_control === "Text" ||
+        currentquestion.type_of_control === "Textarea" ||
+        currentquestion.type_of_control === "Datepicker" ||
+        currentquestion.type_of_control === "Timepicker"
+      ) {
+        if (text.trim() === "") {
+          alert("value required");
+        } else {
+          handleSubmit(currentquestion, [{ answer: text }]);
+          settext("");
+        }
+      }
+
+      // handleSubmit(currentquestion, [{ answer: text }]);
     }
   };
   const textchangehandler = (e) => {
@@ -217,7 +231,8 @@ function App() {
                 currentquestion,
                 handleSubmit,
                 fetched,
-                checkboxhandler
+                checkboxhandler,
+                textchangehandler
               )}
             </div>
           ) : (
@@ -243,18 +258,18 @@ function App() {
                 }}
                 style={{
                   display:
-                    currentquestion.type_of_control === "textarea"
+                    currentquestion.type_of_control === "Textarea"
                       ? "none"
                       : "block",
                 }}
-                disabled={currentquestion.type_of_control !== "text"}
+                disabled={currentquestion.type_of_control !== "Text"}
               />
-              {currentquestion.type_of_control === "textarea" && (
+              {currentquestion.type_of_control === "Textarea" && (
                 <textarea
                   rows="4"
                   cols="50"
                   placeholder={currentquestion.message}
-                  name={"textarea"}
+                  name={"Textarea"}
                   onChange={(e) => {
                     textchangehandler(e);
                   }}
@@ -263,7 +278,15 @@ function App() {
               <button
                 className="sendBtn"
                 onClick={() => handlebutton()}
-                // disabled={currentquestion.type !== "text"}
+                disabled={
+                  // currentquestion.type_of_control !== "Text" ||
+                  // currentquestion.type_of_control !== "Textarea" ||
+                  currentquestion.type_of_control === "Button" ||
+                  currentquestion.type_of_control === "Dropdown" ||
+                  // currentquestion.type_of_control === "Datepicker" ||
+                  // currentquestion.type_of_control === "Timepicker" ||
+                  currentquestion.type_of_control === "File"
+                }
               >
                 <img src={send} />
               </button>

@@ -35,24 +35,23 @@ export default function Question(
   };
   const filechangehandler = (item, event) => {
     let file = event.target.files[0];
-    let answers = [
-      {
-        answer: event.target.files[0].name,
-      },
-    ];
-    callback(item, answers);
-    const reader = new FileReader();
-    reader.addEventListener(
-      "load",
-      function () {
-        // convert image file to base64 string
-        console.log(reader.result);
-      },
-      false
-    );
-
     if (file) {
-      reader.readAsDataURL(file);
+      let x;
+      let fileReader = new FileReader();
+      //Implement onLoad function
+      fileReader.onload = (event) => {
+        x = fileReader.readAsDataURL(file);
+        console.log(event.target.result);
+      };
+      // fileReader.readAsDataURL(file);
+      console.log(x);
+
+      let answers = [
+        {
+          answer: x,
+        },
+      ];
+      //callback(item, answers);
     }
   };
   let htmlElement;

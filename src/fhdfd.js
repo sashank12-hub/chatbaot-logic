@@ -206,11 +206,18 @@ function App() {
                   {question.item.type_of_control !== "Checkbox" && (
                     <div className="response-3">
                       <ul className="ul-response-1">
-                        {question.response.answers.map((item, index) => (
-                          <li key={index} className="li-response-1">
-                            <img src={fav} alt={"listicon"} /> {item.answer}
-                          </li>
-                        ))}
+                        {question.item.type_of_control === "File" && (
+                          <img
+                            alt="hello"
+                            src={question.response.answers.answer}
+                          />
+                        )}
+                        {question.item.type_of_control !== "File" &&
+                          question.response.answers.map((item, index) => (
+                            <li key={index} className="li-response-1">
+                              <img src={fav} alt={"listicon"} /> {item.answer}
+                            </li>
+                          ))}
                       </ul>
                       <img src={avatarorange} alt={"avatar"} />
                     </div>

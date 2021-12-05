@@ -55,10 +55,11 @@ function App() {
     setquestions(response);
     console.log();
 
-    let l = parseInt(localStorage.getItem("lastleftquestion"));
-
-    setcounter(l);
-
+    // let l = parseInt(localStorage.getItem("lastleftquestion"));
+    setcounter(parseInt(localStorage.getItem("lastleftquestion")));
+    setcurrentquestion(
+      response[parseInt(localStorage.getItem("lastleftquestion"))]
+    );
     setfetched(true);
   };
   useEffect(() => {

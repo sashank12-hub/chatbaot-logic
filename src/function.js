@@ -40,18 +40,18 @@ export default function Question(
       let fileReader = new FileReader();
       //Implement onLoad function
       fileReader.onload = (event) => {
-        x = fileReader.readAsDataURL(file);
-        console.log(event.target.result);
+        //x = fileReader.readAsDataURL(file);
+        x = event.target.result.name;
       };
       // fileReader.readAsDataURL(file);
       console.log(x);
 
       let answers = [
         {
-          answer: x,
+          answer: "file",
         },
       ];
-      //callback(item, answers);
+      callback(item, answers);
     }
   };
   let htmlElement;
@@ -154,7 +154,7 @@ export default function Question(
             name="myfile"
             accept="image/*"
             onChange={(e) => {
-              console.log(e.target.files[0]);
+              // console.log(e.target.files[0]);
               filechangehandler(item, e);
             }}
           />

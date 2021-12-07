@@ -131,6 +131,31 @@ function App() {
     }
   };
   const handlebutton = () => {
+    // switch (currentquestion.type_of_control) {
+      //   case "Text":
+      
+      //       if(text.trim() === ""){
+        //         alert("Value Required")
+        //       }else{
+          //         handleSubmit(currentquestion, [{ answer: text }]);
+          //         settext("");
+          //       }
+          
+          //     break;
+          //   case "Textarea":
+          
+          //       if(text.trim() === ""){
+            //         alert("Value Required")
+            //       }else{
+              //         handleSubmit(currentquestion, [{ answer: text }]);
+              //         settext("");
+              //       }  
+              
+              //   default:
+              //     return;
+              //     break;
+              // }
+    
     if (currentquestion.type_of_control === "Multiselect") {
       let answers = selected.filter((item) => item.ischecked === true);
 

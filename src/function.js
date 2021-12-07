@@ -4,7 +4,8 @@ export default function Question(
   callback,
   fetched,
   checkboxhandler,
-  textchangehandler
+  textchangehandler,
+  imageHandler
 ) {
   const radiobuttonhandler = (e) => {
     console.log(e.target.value);
@@ -35,25 +36,23 @@ export default function Question(
   };
   const filechangehandler = (item, event) => {
     let file = event.target.files[0];
+    let answer;
     if (file) {
-      let x;
-      let fileReader = new FileReader();
+      const fileReader = new FileReader();
       //Implement onLoad function
-      fileReader.onload = (event) => {
-        //x = fileReader.readAsDataURL(file);
-        x = event.target.result.name;
-      };
-      // fileReader.readAsDataURL(file);
-      console.log(x);
+      fileReader.addEventListener("load", () => {
+        answer = fileReader.result;
+      });
 
       let answers = [
         {
-          answer: "file",
+          answer: answer,
         },
       ];
       callback(item, answers);
     }
   };
+
   let htmlElement;
   switch (item.type_of_control) {
     case "Button":
@@ -155,7 +154,7 @@ export default function Question(
             accept="image/*"
             onChange={(e) => {
               // console.log(e.target.files[0]);
-              filechangehandler(item, e);
+              imageHandler(item, e);
             }}
           />
         </div>

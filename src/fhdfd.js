@@ -110,6 +110,7 @@ function App() {
         .post("https://tbsdemos.com/bot_uat/api/Login/test", {
           user_id: window.localStorage.getItem("user_id"),
           campaign_id: window.localStorage.getItem("campaign_id"),
+          flag: "submit",
 
           json: JSON.parse(window.localStorage.getItem("chatbotdata"))
             .userresponse,

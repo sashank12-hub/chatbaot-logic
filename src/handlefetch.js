@@ -25,7 +25,7 @@ function App() {
   const initialformstate = {
     userresponse: [],
   };
-
+  var errors = "";
   const [questions, setquestions] = useState([]);
   const [text, settext] = useState("");
   const [storedquestions, setstoredquestions] = useState({});
@@ -34,6 +34,7 @@ function App() {
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
   const [fetched, setfetched] = useState(false);
+  const [image, setimage] = useState("");
 
   const handleFetch = async () => {
     const res = await axios.get(
@@ -161,6 +162,51 @@ function App() {
     console.log("selected", selected);
   };
 
+  const imageHandler = (item, event) => {
+    if (event.target.files[0]) {
+      let answer;
+      let b64;
+      // answer = event.target.files[0];
+      var file = event.target.files[0],
+        reader = new FileReader();
+
+      reader.onloadend = async function () {
+        // Since it contains the Data URI, we should remove the prefix and keep only Base64 string
+        let b64 = await reader.result.replace(/^data:.+;base64,/, "");
+        setimage(b64);
+        let answers = [
+          {
+            answer: b64,
+          },
+        ];
+        handleSubmit(item, answers);
+        document.getElementById("unique").src = reader.result.replace(
+          /^data:.+;base64,/,
+          ""
+        );
+        setimage(b64);
+        console.log(b64);
+      };
+
+      reader.readAsDataURL(file);
+
+      let answers = [
+        {
+          answer: image,
+        },
+      ];
+    }
+  };
+
+  const renderImage = (imagedata) => {
+    // console.log(imagedata);
+    // const reader = new FileReader();
+    // reader.addEventListener("load", () => {
+    //   setimage(reader.result);
+    // });
+    // reader.readAsDataURL(imagedata);
+    //return <img alt="uploaded" src={reader.result} />;
+  };
   return (
     <>
       <img className="chatIcon" src={chaticon} alt={"chatIcon"} />
@@ -183,6 +229,7 @@ function App() {
                     <img src={chatbot} alt={"chatBot"} />
                     <p> {question.item.message}</p>
                   </div>
+
                   {question.item.type_of_control === "Checkbox" && (
                     <div className="response-3">
                       <ul className="ul-response-1">
@@ -202,8 +249,9 @@ function App() {
                       <ul className="ul-response-1">
                         {question.item.type_of_control === "File" && (
                           <img
-                            alt="hello"
-                            src={question.response.answers.answer}
+                            alt="uploaded"
+                            id="unique"
+                            style={{ width: "60px", height: "60px" }}
                           />
                         )}
                         {question.item.type_of_control !== "File" &&
@@ -233,7 +281,8 @@ function App() {
                 handleSubmit,
                 fetched,
                 checkboxhandler,
-                textchangehandler
+                textchangehandler,
+                imageHandler
               )}
             </div>
           ) : (
@@ -245,7 +294,9 @@ function App() {
             <>
               <input
                 id={currentquestion.id}
-                placeholder={currentquestion.placeholder}
+                placeholder={
+                  errors !== "" ? errors : currentquestion.placeholder
+                }
                 value={text}
                 type="text"
                 onChange={(e) => {

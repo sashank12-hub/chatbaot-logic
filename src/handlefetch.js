@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.scss";
-
+import ReactTooltip from "react-tooltip";
 import axios from "axios";
 import Questionhandler from "./function";
 import avatar from "./images/avatar.png";
@@ -25,7 +25,7 @@ function App() {
   const initialformstate = {
     userresponse: [],
   };
-  var errors = "";
+  const [Error, setError] = useState("");
   const [questions, setquestions] = useState([]);
   const [text, settext] = useState("");
   const [storedquestions, setstoredquestions] = useState({});
@@ -35,6 +35,7 @@ function App() {
   const [form, setform] = useState(initialformstate);
   const [fetched, setfetched] = useState(false);
   const [image, setimage] = useState("");
+  const [Errorimage, setErrorimage] = useState("");
 
   const handleFetch = async () => {
     const res = await axios.get(
@@ -116,11 +117,11 @@ function App() {
           console.log(res);
           setislastitem(true);
         })
-        .catch(function (error) {
-          console.log(error);
+        .catch((e) => {
+          console.log(e);
         });
       setcounter("full");
-      alert("thanks");
+      // alert("thanks");
     } else {
       console.log("counter", counter);
       window.localStorage.setItem("lastleftquestion", counter + 1);
@@ -128,12 +129,45 @@ function App() {
     }
   };
   const handlebutton = () => {
+    switch (currentquestion.type_of_control) {
+      case "Text":
+        if (text.trim() === "") {
+          Errorhandler("value response");
+        }
+        break;
+      case "Textarea":
+        if (text.trim() === "") {
+          Errorhandler("value Required");
+        }
+        break;
+      case "Datepicker":
+        if (text.trim() === "") {
+          Errorhandler("value Required");
+        }
+        break;
+      case "Timepicker":
+        if (text.trim() === "") {
+          Errorhandler("value Required");
+        }
+        break;
+      case "File":
+        Errorimage === "" ? Errorhandler("file is required") : Errorhandler("");
+        break;
+
+      default:
+        break;
+    }
+
     if (currentquestion.type_of_control === "Multiselect") {
       let answers = selected.filter((item) => item.ischecked === true);
-
-      handleSubmit(currentquestion, [
-        { answer: answers.map((item) => item.value).join(",") },
-      ]);
+      if (answers.length <= 0) {
+        Errorhandler("pls select multiple values");
+      } else {
+        Errorhandler("");
+        handleSubmit(currentquestion, [
+          { answer: answers.map((item) => item.value).join(",") },
+        ]);
+      }
     } else {
       if (
         currentquestion.type_of_control === "Text" ||
@@ -142,7 +176,7 @@ function App() {
         currentquestion.type_of_control === "Timepicker"
       ) {
         if (text.trim() === "") {
-          alert("value required");
+          //alert("value required");
         } else {
           handleSubmit(currentquestion, [{ answer: text }]);
           settext("");
@@ -152,6 +186,7 @@ function App() {
   };
   const textchangehandler = (e) => {
     settext(e.target.value);
+    Errorhandler("");
   };
 
   const checkboxhandler = (e, array) => {
@@ -195,9 +230,16 @@ function App() {
           answer: image,
         },
       ];
+      setErrorimage(false);
+      Errorhandler("");
+    } else {
+      setErrorimage(true);
+      Errorhandler("pls upload a file with data");
     }
   };
-
+  const Errorhandler = (message) => {
+    setError(message);
+  };
   const renderImage = (imagedata) => {
     // console.log(imagedata);
     // const reader = new FileReader();
@@ -282,7 +324,8 @@ function App() {
                 fetched,
                 checkboxhandler,
                 textchangehandler,
-                imageHandler
+                imageHandler,
+                Errorhandler
               )}
             </div>
           ) : (
@@ -294,9 +337,7 @@ function App() {
             <>
               <input
                 id={currentquestion.id}
-                placeholder={
-                  errors !== "" ? errors : currentquestion.placeholder
-                }
+                placeholder={currentquestion.placeholder}
                 value={text}
                 type="text"
                 onChange={(e) => {
@@ -319,6 +360,30 @@ function App() {
                   counter === "full"
                 }
               />
+              {Error && (
+                <div
+                  className="side"
+                  style={{
+                    transform: "translate3d(5px, 5px, 5px)",
+                    position: "absolute",
+                    right: "72px",
+                    top: "18px",
+                  }}
+                >
+                  <a data-tip="tooltip" data-for="happyFace">
+                    !
+                  </a>
+                  <ReactTooltip
+                    id="happyFace"
+                    // style={{width:"100px", height:"10px"}}
+                    type="error"
+                    place="left"
+                    effect="solid"
+                  >
+                    <span>{Error}</span>
+                  </ReactTooltip>
+                </div>
+              )}
               {currentquestion.type_of_control === "Textarea" && (
                 <textarea
                   rows="4"
@@ -337,8 +402,7 @@ function App() {
                 disabled={
                   counter === "full" ||
                   currentquestion.type_of_control === "Button" ||
-                  currentquestion.type_of_control === "Dropdown" ||
-                  currentquestion.type_of_control === "File"
+                  currentquestion.type_of_control === "Dropdown"
                 }
               >
                 <img src={send} />

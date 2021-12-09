@@ -9,6 +9,7 @@ export default function Question(
 ) {
   const radiobuttonhandler = (e) => {
     console.log(e.target.value);
+
     let answers = [
       {
         answer: e.target.value,
@@ -16,15 +17,6 @@ export default function Question(
     ];
     callback(item, answers);
   };
-  // const Timehandler = (e) => {
-  //   console.log(e.target.value);
-  //   let answers = [
-  //     {
-  //       answer: e.target.value,
-  //     },
-  //   ];
-  //   //callback(item, answers);
-  // };
 
   const selecthandler = (e) => {
     let answers = [

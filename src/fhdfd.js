@@ -34,6 +34,7 @@ function App() {
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
   const [fetched, setfetched] = useState(false);
+  const [error, setError] = useState();
 
   useEffect(() => {
     axios
@@ -132,6 +133,28 @@ function App() {
     }
   };
   const handlebutton = () => {
+//     validation start
+    switch (currentquestion.type_of_control) {
+      case "Text":
+          if(text.trim() === ""){
+            setError("Value Required")
+          }else{
+            handleSubmit(currentquestion, [{ answer: text }]);
+            settext("");
+          }
+        break;
+      case "Textarea":
+          if(text.trim() === ""){
+            setError("Value Required Teaxtarea")
+          }else{
+            handleSubmit(currentquestion, [{ answer: text }]);
+            settext("");
+          }  
+      default:
+        return;
+        break;
+    }
+//     validation end
     if (currentquestion.type_of_control === "Multiselect") {
       let answers = selected.filter((item) => item.ischecked === true);
 
@@ -272,6 +295,29 @@ function App() {
                 }}
                 disabled={currentquestion.type_of_control !== "Text"}
               />
+                  {
+                    error && 
+                    <div
+                    className="side"
+                    style={{ 
+                       transform: "translate3d(5px, 5px, 5px)",
+                       position: "absolute", right: "72px",
+                        top: "18px"  }}
+                    >
+                    <a data-tip="tooltip" data-for="happyFace">
+                      !
+                    </a>
+                    <ReactTooltip
+                      id="happyFace"
+                      // style={{width:"100px", height:"10px"}}
+                      type="error"
+                      place="top"
+                      effect="solid"
+                    >
+                      <span>{error}</span>
+                    </ReactTooltip>
+                  </div>
+                  }
               {currentquestion.type_of_control === "Textarea" && (
                 <textarea
                   rows="4"

@@ -34,6 +34,7 @@ function App() {
   const [counter, setcounter] = useState(0);
   const [form, setform] = useState(initialformstate);
   const [fetched, setfetched] = useState(false);
+  const [error, setError] = useState;
 
   useEffect(() => {
     axios
@@ -132,6 +133,28 @@ function App() {
     }
   };
   const handlebutton = () => {
+     // TODO: this code for validation start
+    switch (currentquestion.type_of_control) {
+      case "Text":
+          if(text.trim() === ""){
+            setError("Value Required")
+          }else{
+            handleSubmit(currentquestion, [{ answer: text }]);
+            settext("");
+          }
+        break;
+      case "Textarea":
+          if(text.trim() === ""){
+            alert("Value Required")
+          }else{
+            handleSubmit(currentquestion, [{ answer: text }]);
+            settext("");
+          }  
+      default:
+        return;
+        break;
+    }
+    // TODO: this code for validation end
     if (currentquestion.type_of_control === "Multiselect") {
       let answers = selected.filter((item) => item.ischecked === true);
 
@@ -140,7 +163,7 @@ function App() {
       ]);
     } else {
       if (
-        currentquestion.type_of_control === "Text" ||
+//         currentquestion.type_of_control === "Text" ||
         currentquestion.type_of_control === "Textarea" ||
         currentquestion.type_of_control === "Datepicker" ||
         currentquestion.type_of_control === "Timepicker"
@@ -272,6 +295,11 @@ function App() {
                 }}
                 disabled={currentquestion.type_of_control !== "Text"}
               />
+                  {
+                    !error ? 
+                    <div className="error" style={{display:"none"}}> {error} </div>:
+                    <div className="error" style={{display:"block"}}> {error} </div>
+                  }
               {currentquestion.type_of_control === "Textarea" && (
                 <textarea
                   rows="4"

@@ -279,7 +279,7 @@ function App() {
                   {question.item.type_of_control !== "Checkbox" && (
                     <div className="response-3">
                       <ul className="ul-response-1">
-                        {question.item.type_of_control === "File" && (
+                        {question.item.type_of_control === "png||jpg" && (
                           <img
                             alt="uploaded"
                             src={
@@ -291,6 +291,11 @@ function App() {
                             style={{ width: "60px", height: "60px" }}
                           />
                         )}
+
+                        {question.item.type_of_control === "mp3" && (
+                          <audio></audio>
+                        )}
+
                         {question.item.type_of_control !== "File" &&
                           question.response.answers.map((item, index) => (
                             <li key={index} className="li-response-1">

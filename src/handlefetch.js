@@ -25,6 +25,7 @@ function App() {
   const initialformstate = {
     userresponse: [],
   };
+  let b64;
   const [Error, setError] = useState("");
   const [questions, setquestions] = useState([]);
   const [text, settext] = useState("");
@@ -36,6 +37,7 @@ function App() {
   const [fetched, setfetched] = useState(false);
   const [image, setimage] = useState("");
   const [Errorimage, setErrorimage] = useState("");
+  const [showimage, setshowimage] = useState(null);
 
   const handleFetch = async () => {
     const res = await axios.get(
@@ -131,8 +133,13 @@ function App() {
   const handlebutton = () => {
     switch (currentquestion.type_of_control) {
       case "Text":
+        let regex = /^[a-zA-Z ]+$/;
+        let output = text.match(regex);
+        console.log(output);
         if (text.trim() === "") {
           Errorhandler("value response");
+        } else if (output === null) {
+          Errorhandler("value Required");
         }
         break;
       case "Textarea":
@@ -168,21 +175,22 @@ function App() {
           { answer: answers.map((item) => item.value).join(",") },
         ]);
       }
-    } else {
-      if (
-        currentquestion.type_of_control === "Text" ||
-        currentquestion.type_of_control === "Textarea" ||
-        currentquestion.type_of_control === "Datepicker" ||
-        currentquestion.type_of_control === "Timepicker"
-      ) {
-        if (text.trim() === "") {
-          //alert("value required");
-        } else {
-          handleSubmit(currentquestion, [{ answer: text }]);
-          settext("");
-        }
-      }
     }
+    //else {
+    //   if (
+    //     currentquestion.type_of_control === "Text" ||
+    //     currentquestion.type_of_control === "Textarea" ||
+    //     currentquestion.type_of_control === "Datepicker" ||
+    //     currentquestion.type_of_control === "Timepicker"
+    //   ) {
+    //     if (text.trim() === "") {
+    //       //alert("value required");
+    //     } else {
+    //       handleSubmit(currentquestion, [{ answer: text }]);
+    //       settext("");
+    //     }
+    //   }
+    // }
   };
   const textchangehandler = (e) => {
     settext(e.target.value);
@@ -196,40 +204,30 @@ function App() {
     selected = [...array];
     console.log("selected", selected);
   };
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
 
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
   const imageHandler = (item, event) => {
     if (event.target.files[0]) {
-      let answer;
-      let b64;
-      // answer = event.target.files[0];
-      var file = event.target.files[0],
-        reader = new FileReader();
+      const file = event.target.files[0];
+      getBase64(file).then((base64) => {
+        localStorage["image"] = base64;
 
-      reader.onloadend = async function () {
-        // Since it contains the Data URI, we should remove the prefix and keep only Base64 string
-        let b64 = await reader.result.replace(/^data:.+;base64,/, "");
-        setimage(b64);
         let answers = [
           {
-            answer: b64,
+            answer: base64.replace(/^data:.+;base64,/, ""),
+            type: file.type,
           },
         ];
         handleSubmit(item, answers);
-        document.getElementById("unique").src = reader.result.replace(
-          /^data:.+;base64,/,
-          ""
-        );
-        setimage(b64);
-        console.log(b64);
-      };
-
-      reader.readAsDataURL(file);
-
-      let answers = [
-        {
-          answer: image,
-        },
-      ];
+        //console.debug("file stored", base64);
+      });
       setErrorimage(false);
       Errorhandler("");
     } else {
@@ -240,15 +238,7 @@ function App() {
   const Errorhandler = (message) => {
     setError(message);
   };
-  const renderImage = (imagedata) => {
-    // console.log(imagedata);
-    // const reader = new FileReader();
-    // reader.addEventListener("load", () => {
-    //   setimage(reader.result);
-    // });
-    // reader.readAsDataURL(imagedata);
-    //return <img alt="uploaded" src={reader.result} />;
-  };
+
   return (
     <>
       <img className="chatIcon" src={chaticon} alt={"chatIcon"} />
@@ -292,6 +282,11 @@ function App() {
                         {question.item.type_of_control === "File" && (
                           <img
                             alt="uploaded"
+                            src={
+                              showimage
+                                ? showimage
+                                : window.localStorage.getItem("image")
+                            }
                             id="unique"
                             style={{ width: "60px", height: "60px" }}
                           />
